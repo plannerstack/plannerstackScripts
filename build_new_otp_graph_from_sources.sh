@@ -25,38 +25,45 @@ set -o nounset
 #
 #
 
-# INPUT VARIABLES, setting to absolute paths
+# DEFAULTS
+OSM_PBF_URL_DEFAULT="http://download.geofabrik.de/europe/netherlands-latest.osm.pbf"
+GTFS_URL_DEFAULT="http://gtfs.plannerstack.com/new/gtfs-nl.zip"
+RAM_GB_DEFAULT="21"
+# GTFS_URL="http://gtfs.ovapi.nl/new/gtfs-nl.zip" # ALTERNATIVE
+
+# INPUT ARGUMENTS
 OTP_JAR="${1:-Undefined}"
 BUILD_DIRECTORY="${2:-Undefined}"
 GRAPH_PROPERTIES_PATH="${3:-Undefined}"
+OSM_PBF_URL="${4:-OSM_PBF_URL_DEFAULT}"
+GTFS_URL="${5:-GTFS_URL_DEFAULT}"
+RAM_GB="${6:-RAM_GB_DEFAULT}"
 
-# OTHER VARIABLES
-RAM_GB="21"
-OSM_PBF_URL="http://download.geofabrik.de/europe/netherlands-latest.osm.pbf"
-GTFS_URL="http://gtfs.plannerstack.com/new/gtfs-nl.zip"
-# GTFS_URL="http://gtfs.ovapi.nl/new/gtfs-nl.zip" # ALTERNATIVE
-
-# COMPUTED VARIABLED
+# COMPUTED VARIABLES
 OTP_JAR_ABS="${__CURRENT_WORKING_DIR__}/${OTP_JAR}"
 BUILD_DIRECTORY_ABS="${__CURRENT_WORKING_DIR__}/${BUILD_DIRECTORY}"
 GRAPH_PROPERTIES_PATH_ABS="${__CURRENT_WORKING_DIR__}/${GRAPH_PROPERTIES_PATH}"
 GRAPH_PROPERTIES_CONTENT=$(<${GRAPH_PROPERTIES_PATH_ABS})
 SOURCES_JSON="{\"osm.pbf\":\""${OSM_PBF_URL}"\", \"gtfs.zip\":\""${GTFS_URL}"\"}"
 
-echo "CREATING BUILD DIRECTORY IF NECESSARY"
+echo
+echo
+echo
+
+echo "1 CREATING BUILD DIRECTORY IF NECESSARY"
 mkdir -p ${BUILD_DIRECTORY_ABS}
 cd ${BUILD_DIRECTORY_ABS}
 
-echo "CREATING GRAPH FILE"
+echo "2 CREATING GRAPH PROPERTIES FILE"
 echo "${GRAPH_PROPERTIES_CONTENT}" >> Graph.properties
 
-echo "DOWNLOADING OPENSTREETMAP DATA"
+echo "3 DOWNLOADING OPENSTREETMAP DATA"
 wget ${OSM_PBF_URL} -O osm.pbf --tries=1 --timeout=600
 
-echo "DOWNLOADING GTFS DATA"
+echo "4 DOWNLOADING GTFS DATA"
 wget ${GTFS_URL} -O gtfs.zip --tries=1 --timeout=600
 
-echo "Backup last build graph"
+echo "5 BACKING UP LAST BUILD GRAPH AND SOURCES JSON"
 if [ -f Graph.obj ]
 then
     mv Graph.obj Graph.obj.last
@@ -66,13 +73,13 @@ then
     mv lastBuildSources.json lastBuildSources.json.last
 fi
 
-echo "SAVE CURRENT BUILD SOURCES"
+echo "6 SAVE CURRENT BUILD SOURCES"
 echo ${SOURCES_JSON} >> lastBuildSources.json
 
-echo "BUILD GRAPH"
+echo "7 BUILD GRAPH"
 time java -server -Xmx${RAM_GB}G -jar ${OTP_JAR_ABS} --skipVisibility --longDistance --build .
 
-echo "GO BACK TO WHERE WE CAME FROM"
+echo "8 GO BACK TO WHERE WE CAME FROM"
 cd ${__DIR__}
 
 exit

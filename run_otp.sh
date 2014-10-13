@@ -56,11 +56,13 @@ if [ ! -e "${GRAPH_PROPERTIES_PATH_ABS}" ]; then echo "ERROR: NO GRAPH PROPERTIE
 if [ ! -d "${TMP_DIR_ABS_DEFAULT}" ]; then echo "ERROR: NO TMP DIRE FOUND IN GIVEN PATH"; exit; fi
 
 # START ACTUAL SCRIPT
-echo "1 COPYING GIVING GRAPH PROPERTIES FILE TO GRAPH BUILD DIRECTORY"
+echo; echo "1 COPYING GIVING GRAPH PROPERTIES FILE TO GRAPH BUILD DIRECTORY"; echo;
 GRAPH_PROPERTIES_CONTENT=$(<${GRAPH_PROPERTIES_PATH_ABS})
 echo "${GRAPH_PROPERTIES_CONTENT}" >> ${GRAPH_DIRECTORY_ABS}/Graph.properties
 
-echo "2 STARTING UP OTP"
+echo; echo "2 STARTING UP OTP"; echo;
 nohup java -Djava.io.tmpdir=${TMP_DIR_ABS} -XX:NewRatio=1 -Xms${RAM_GB}G -Xmx${RAM_GB}G -XX:+OptimizeStringConcat -XX:+UseStringCache -XX:+UseConcMarkSweepGC -server -jar ${OTP_JAR_ABS} --server  --longDistance -g ${GRAPH_DIRECTORY_ABS} -p 9050 | tee ${LOG_FILE_ABS} &
+echo "STARTED"
 
+cd ${__DIR__}
 exit

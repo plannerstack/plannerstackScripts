@@ -6,7 +6,7 @@ set -o pipefail
 set -o errexit
 
 # FOR DEBUGGING!
-set -o xtrace
+# set -o xtrace
 
 # Set variables for current FILE, & DIR
 __DIR__="$(cd "$(dirname "${0}")"; echo $(pwd))"
@@ -44,7 +44,7 @@ GRAPH_PROPERTIES_CONTENT=$(<${GRAPH_PROPERTIES_PATH_ABS})
 SOURCES_JSON="{\"osm.pbf\":\""${OSM_PBF_URL}"\", \"gtfs.zip\":\""${GTFS_URL}"\"}"
 
 echo "CREATING BUILD DIRECTORY IF NECESSARY"
-mkdir ${BUILD_DIRECTORY_ABS}
+mkdir -p ${BUILD_DIRECTORY_ABS}
 cd ${BUILD_DIRECTORY_ABS}
 
 echo "CREATING GRAPH FILE"

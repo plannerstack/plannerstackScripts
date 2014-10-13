@@ -33,9 +33,9 @@ GRAPH_PROPERTIES_PATH="${3:-Undefined}"
 GRAPH_PROPERTIES_CONTENT=$(<${GRAPH_PROPERTIES_PATH})
 
 # OTHER VARIABLES
-RAM_GB = "21"
-OSM_PBF_URL = "http://download.geofabrik.de/europe/netherlands-latest.osm.pbf"
-GTFS_URL = "http://gtfs.plannerstack.com/new/gtfs-nl.zip"
+RAM_GB="21"
+OSM_PBF_URL="http://download.geofabrik.de/europe/netherlands-latest.osm.pbf"
+GTFS_URL="http://gtfs.plannerstack.com/new/gtfs-nl.zip"
 # ALTERNATIVE http://gtfs.ovapi.nl/new/gtfs-nl.zip
 
 echo "GOING INTO TARGET_DIRECTORY"
@@ -58,3 +58,9 @@ echo "BUILD GRAPH"
 time java -server -Xmx${RAM_GB}G -jar ${OTP_JAR} -a --transitIndex -l -b .
 
 exit
+
+
+
+# TODO:
+
+# USE TIMESTAMPS TO ONLY DOWNLOAD IF NECESSARY

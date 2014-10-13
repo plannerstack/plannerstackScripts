@@ -25,21 +25,19 @@ set -o nounset
 #
 
 # INPUT VARIABLES
-OTP_JAR="${1:-Undefined}"
-BUILD_DIRECTORY="${2:-Undefined}"
-GRAPH_PROPERTIES_PATH="${3:-Undefined}"
-
-# COMPUTED VARIABLED
-GRAPH_PROPERTIES_CONTENT=$(<${GRAPH_PROPERTIES_PATH})
+OTP_JAR="${__DIR__}/${1:-Undefined}"
+BUILD_DIRECTORY="${__DIR__}/${2:-Undefined}"
+GRAPH_PROPERTIES_PATH="${__DIR__}/${3:-Undefined}"
 
 # OTHER VARIABLES
 RAM_GB="21"
 OSM_PBF_URL="http://download.geofabrik.de/europe/netherlands-latest.osm.pbf"
 GTFS_URL="http://gtfs.plannerstack.com/new/gtfs-nl.zip"
-# ALTERNATIVE http://gtfs.ovapi.nl/new/gtfs-nl.zip
+# GTFS_URL="http://gtfs.ovapi.nl/new/gtfs-nl.zip" # ALTERNATIVE
 
-echo "GOING INTO TARGET_DIRECTORY"
-cd ${TARGET_DIRECTORY}
+# COMPUTED VARIABLED
+GRAPH_PROPERTIES_CONTENT=$(<${GRAPH_PROPERTIES_PATH})
+SOURCES_JSON="{\"osm.pbf\":\""${OSM_PBF_URL}"\", \"gtfs.zip\":\""${GTFS_URL}"\"}"
 
 echo "CREATING BUILD DIRECTORY IF NECESSARY"
 mkdir ${BUILD_DIRECTORY}
@@ -49,13 +47,29 @@ echo "CREATING GRAPH FILE"
 echo "${GRAPH_PROPERTIES_CONTENT}" >> Graph.properties
 
 echo "DOWNLOADING OPENSTREETMAP DATA"
-wget ${OSM_PBF_URL} -P .
+wget ${OSM_PBF_URL} -O osm.pbf --tries=1 --timeout=600
 
 echo "DOWNLOADING GTFS DATA"
-wget ${GTFS_URL} -P .
+wget ${GTFS_URL} -O gtfs.zip --tries=1 --timeout=600
+
+echo "Backup last build graph"
+if [ -f Graph.obj ]
+then
+    mv Graph.obj Graph.obj.last
+fi
+if [ -f lastBuildSources.json ]
+then
+    mv lastBuildSources.json lastBuildSources.json.last
+fi
+
+echo "SAVE CURRENT BUILD SOURCES"
+echo ${SOURCES_JSON} >> lastBuildSources.json
 
 echo "BUILD GRAPH"
-time java -server -Xmx${RAM_GB}G -jar ${OTP_JAR} -a --transitIndex -l -b .
+time java -server -Xmx${RAM_GB}G -jar ${OTP_JAR} --skipVisibility --longDistance --build .
+
+echo "GO BACK TO WHERE WE CAME FROM"
+cd ${__DIR__}
 
 exit
 

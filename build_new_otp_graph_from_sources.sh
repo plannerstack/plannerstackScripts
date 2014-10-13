@@ -12,6 +12,7 @@ set -o xtrace
 __DIR__="$(cd "$(dirname "${0}")"; echo $(pwd))"
 __BASE__="$(basename "${0}")"
 __FILE__="${__DIR__}/${__BASE__}"
+__CURRENT_WORKING_DIR__=$(pwd)
 
 # Exit when using undeclared variables
 set -o nounset
@@ -24,10 +25,10 @@ set -o nounset
 #
 #
 
-# INPUT VARIABLES
-OTP_JAR="${__DIR__}/${1:-Undefined}"
-BUILD_DIRECTORY="${__DIR__}/${2:-Undefined}"
-GRAPH_PROPERTIES_PATH="${__DIR__}/${3:-Undefined}"
+# INPUT VARIABLES, setting to absolute paths
+OTP_JAR="${1:-Undefined}"
+BUILD_DIRECTORY="${2:-Undefined}"
+GRAPH_PROPERTIES_PATH="${3:-Undefined}"
 
 # OTHER VARIABLES
 RAM_GB="21"
@@ -36,12 +37,15 @@ GTFS_URL="http://gtfs.plannerstack.com/new/gtfs-nl.zip"
 # GTFS_URL="http://gtfs.ovapi.nl/new/gtfs-nl.zip" # ALTERNATIVE
 
 # COMPUTED VARIABLED
-GRAPH_PROPERTIES_CONTENT=$(<${GRAPH_PROPERTIES_PATH})
+OTP_JAR_ABS="${__CURRENT_WORKING_DIR__}/${OTP_JAR}"
+BUILD_DIRECTORY_ABS="${__CURRENT_WORKING_DIR__}/${BUILD_DIRECTORY}"
+GRAPH_PROPERTIES_PATH_ABS="${__CURRENT_WORKING_DIR__}/${GRAPH_PROPERTIES_PATH}"
+GRAPH_PROPERTIES_CONTENT=$(<${GRAPH_PROPERTIES_PATH_ABS})
 SOURCES_JSON="{\"osm.pbf\":\""${OSM_PBF_URL}"\", \"gtfs.zip\":\""${GTFS_URL}"\"}"
 
 echo "CREATING BUILD DIRECTORY IF NECESSARY"
-mkdir ${BUILD_DIRECTORY}
-cd ${BUILD_DIRECTORY}
+mkdir ${BUILD_DIRECTORY_ABS}
+cd ${BUILD_DIRECTORY_ABS}
 
 echo "CREATING GRAPH FILE"
 echo "${GRAPH_PROPERTIES_CONTENT}" >> Graph.properties
@@ -66,7 +70,7 @@ echo "SAVE CURRENT BUILD SOURCES"
 echo ${SOURCES_JSON} >> lastBuildSources.json
 
 echo "BUILD GRAPH"
-time java -server -Xmx${RAM_GB}G -jar ${OTP_JAR} --skipVisibility --longDistance --build .
+time java -server -Xmx${RAM_GB}G -jar ${OTP_JAR_ABS} --skipVisibility --longDistance --build .
 
 echo "GO BACK TO WHERE WE CAME FROM"
 cd ${__DIR__}
@@ -78,3 +82,4 @@ exit
 # TODO:
 
 # USE TIMESTAMPS TO ONLY DOWNLOAD IF NECESSARY
+# Checking for existence of properties

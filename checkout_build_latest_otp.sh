@@ -62,6 +62,7 @@ fi
 echo; echo "2 FORCE CHECKOUT BRANCH: ${OTP_BRANCH}"; echo;
 git checkout -f HEAD^
 git checkout -f ${OTP_BRANCH}
+git pull
 
 echo; echo "3 BUILD OTP"; echo;
 mvn clean verify # -DskipTests # Or skip tests if you don't want to

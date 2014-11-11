@@ -39,8 +39,9 @@ OTP_DIRECTORY="${1:-${OTP_DIRECTORY_DEFAULT}}"
 OTP_GIT_URL="${2:-${OTP_GIT_URL_DEFAULT}}"
 OTP_BRANCH="${3:-${OTP_BRANCH_DEFAULT}}"
 
-# COMPUTED VARIABLES
+
 OTP_DIRECTORY=$(cd "$OTP_DIRECTORY" && pwd)
+CURRENT_WORKING_DIR=$(pwd)
 
 # COMPUTED VARIABLES VALIDATION
 if [ ! -d "${OTP_DIRECTORY}" ]; then echo "ERROR: NO DIRECTORY FOUND ON GIVE PATH: FIRST CREATE EMPTY DIRECTORY"; exit; fi
@@ -65,6 +66,6 @@ git pull
 echo; echo "3 BUILD OTP"; echo;
 mvn clean verify # -DskipTests # Or skip tests if you don't want to
 
-cd ${__DIR__}
+cd ${CURRENT_WORKING_DIR}
 
 exit

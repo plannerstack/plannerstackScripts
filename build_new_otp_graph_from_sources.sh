@@ -69,23 +69,16 @@ wget ${OSM_PBF_URL} -O osm.pbf --tries=1 --timeout=600
 echo "3 DOWNLOADING GTFS DATA"
 wget ${GTFS_URL} -O gtfs.zip --tries=1 --timeout=600
 
-echo "4 BACKING UP LAST BUILD GRAPH AND SOURCES JSON"
+echo "4 BACKING UP LAST BUILD GRAPH"
 if [ -f Graph.obj ]
 then
     mv Graph.obj Graph.obj.last
 fi
-if [ -f lastBuildSources.json ]
-then
-    mv lastBuildSources.json lastBuildSources.json.last
-fi
 
-echo "5 SAVE CURRENT BUILD SOURCES"
-echo ${SOURCES_JSON} >> lastBuildSources.json
-
-echo "6 BUILD GRAPH"
+echo "5 BUILD GRAPH"
 time java -server -Xmx${RAM_GB}G -jar "${OTP_JAR_DIRECTORY}/${OTP_JAR_NAME}" --skipVisibility --longDistance --build .
 
-echo "7 GO BACK TO WHERE WE CAME FROM"
+echo "6 GO BACK TO WHERE WE CAME FROM"
 cd ${CURRENT_DIRECTORY}
 
 exit

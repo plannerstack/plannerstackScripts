@@ -60,6 +60,8 @@ echo; echo "1 COPYING GIVING GRAPH PROPERTIES FILE TO GRAPH BUILD DIRECTORY"; ec
 GRAPH_PROPERTIES_CONTENT=$(<${GRAPH_PROPERTIES_PATH_ABS})
 echo "${GRAPH_PROPERTIES_CONTENT}" >> ${GRAPH_DIRECTORY_ABS}/Graph.properties
 
+mkdir -p ${TMP_DIR_ABS}
+
 echo; echo "2 STARTING UP OTP"; echo;
 nohup java -Djava.io.tmpdir=${TMP_DIR_ABS} -XX:NewRatio=1 -Xms${RAM_GB}G -Xmx${RAM_GB}G -XX:+OptimizeStringConcat -XX:+UseStringCache -XX:+UseConcMarkSweepGC -server -jar ${OTP_JAR_ABS} --server  --longDistance -g ${GRAPH_DIRECTORY_ABS} -p 9050 | tee ${LOG_FILE_ABS} &
 echo "STARTED"

@@ -40,15 +40,18 @@ GRAPH_PROPERTIES_DIRECTORY="${3:-Undefined}"
 LOG_FILE_DIRECTORY="${4:-${LOG_FILE_DIRECTORY_DEFAULT}}"
 RAM_GB="${5:-${RAM_GB_DEFAULT}}"
 
-# INPUT VALIDATION
-if [[ "${OTP_JAR_DIRECTORY}" == Undefined || "${OTP_JAR_DIRECTORY}/${OTP_JAR_FILE_NAME}" == Undefined ]]; then echo "INFO: Pass along a directory containing an '"${OTP_JAR_FILE_NAME}"' file"; exit; fi
+# INITIAL INPUT VALIDATION
+if [[ "${OTP_JAR_DIRECTORY}" == Undefined ]]; then echo "INFO: Pass along a directory containing an '"${OTP_JAR_FILE_NAME}"' file"; exit; fi
 if [[ "${GRAPH_DIRECTORY}" == Undefined ]]; then echo "ERROR: Pass along a directory contianing your .pbf and gtfs files"; exit; fi
-if [[ "${GRAPH_PROPERTIES_DIRECTORY}" == Undefined || "${GRAPH_PROPERTIES_DIRECTORY}/${GRAPH_PROPERTY_FILE_NAME}" == Undefined ]]; then echo "ERROR: Pass along a directory that contains a "${GRAPH_PROPERTY_FILE_NAME}; exit; fi
+if [[ "${GRAPH_PROPERTIES_DIRECTORY}" == Undefined ]]; then echo "ERROR: Pass along a directory that contains a "${GRAPH_PROPERTY_FILE_NAME}; exit; fi
 
 OTP_JAR_DIRECTORY=$(cd "$OTP_JAR_DIRECTORY" && pwd)
 GRAPH_DIRECTORY=$(cd "$GRAPH_DIRECTORY" && pwd)
 GRAPH_PROPERTIES_DIRECTORY=$(cd "$GRAPH_PROPERTIES_DIRECTORY" && pwd)
 LOG_FILE_DIRECTORY=$(cd "$LOG_FILE_DIRECTORY" && pwd)
+
+if [[ "${OTP_JAR_DIRECTORY}/${OTP_JAR_FILE_NAME}" == Undefined ]]; then echo "INFO: Pass along a directory containing an '"${OTP_JAR_FILE_NAME}"' file"; exit; fi
+if [[ "${GRAPH_PROPERTIES_DIRECTORY}/${GRAPH_PROPERTY_FILE_NAME}" == Undefined ]]; then echo "ERROR: Pass along a directory that contains a "${GRAPH_PROPERTY_FILE_NAME}; exit; fi
 
 # START ACTUAL SCRIPT
 echo; echo "1 COPYING GIVING GRAPH PROPERTIES FILE TO GRAPH BUILD DIRECTORY AS THAT'S WHERE OTP EXPECTS IT TO BE"; echo;

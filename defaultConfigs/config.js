@@ -294,7 +294,7 @@ otp.config.modes = {
         "BUSISH,WALK"         : _tr("Bus Only"), 
     //TRANSLATORS: Travel by: mode of transport (Used in selection in Travel
     //Options widgets)
-        "TRAINISH,WALK"       : _tr("Rail Only"), 
+        "RAIL,WALK"       : _tr("Rail Only"), 
     //TRANSLATORS: Travel by: mode of transport (Used in selection in Travel
     //Options widgets)
         "BICYCLE"             : _tr('Bicycle Only'),
